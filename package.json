@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/nenebeji/Employee-Tracker/issues"
   },
-  "homepage": "https://github.com/nenebeji/Employee-Tracker#readme"
+  "homepage": "https://github.com/nenebeji/Employee-Tracker#readme",
+  "dependencies": {
+    "asciiart-logo": "^0.2.7",
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.3.3"
+  }
 }
