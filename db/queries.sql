@@ -1,32 +1,26 @@
--- SELECT
--- employee.first_name,
--- employee.last_name,
--- role.salary
--- FROM employee
--- JOIN role ON employee.role_id = role.id,
--- JOIN employee ON employee.manager_id = employee.id;
+-- Department Table
+SELECT * FROM department;
 
--- SELECT
--- department.name
--- FROM role
--- JOIN department ON role.department_id = department.id;
+-- Role Table
+SELECT * FROM role;
 
--- SELECT * FROM department;
--- SELECT * FROM role;
--- SELECT * FROM employee;
--- SELECT 
--- department.name
--- FROM role JOIN department ON role.department_id = department.id;
+-- Employee Table
+SELECT * FROM employee;
 
+-- Employee details no manager 
 SELECT
 employee.id, 
 employee.first_name,
 employee.last_name,
 role.title AS role,
 department.name AS department,
-role.salary
+role.salary,
+CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name 
 FROM employee
+AS manager RIGHT OUTER JOIN employee ON manager.id = employee.manager_id
 JOIN role ON employee.role_id = role.id
 JOIN department ON role.department_id = department.id
 ORDER BY employee.id;
+
+
 

@@ -25,9 +25,15 @@ CREATE TABLE employee (
   role_id INT,
   manager_id INT,
   FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE SET NULL
---   FOREIGN KEY (manager_id) REFERENCES employee(id) 
+--   FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
 );
 
 SET FOREIGN_KEY_CHECKS = 0;
 ALTER TABLE employee ADD FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL;
 
+-- Create view for Employee details with Manager
+-- CREATE VIEW manager_employees AS
+-- (SELECT
+-- staff.role_id,
+-- CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name
+-- FROM employee AS manager RIGHT OUTER JOIN employee AS staff ON manager.id = staff.manager_id);
