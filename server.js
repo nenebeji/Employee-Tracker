@@ -16,6 +16,7 @@ const db = mysql.createConnection(
   console.log(`\nConnected to the employees_db database.`)
 );
 
+// function to start prompt with first question
 const starterPrompt = () => {
   return inquirer.prompt([
       {
@@ -30,9 +31,10 @@ const starterPrompt = () => {
               'Add a role',
               'Add an employee',
               'Update an employee',
-              'Update employee manager',
+              'Update employee managers',
               'View employees by manager',
               'View employees by department',
+              'Delete department, roles and employees',
               'View total utilized budget by department',
               'Quit Application'
           ]
@@ -68,7 +70,7 @@ const starterPrompt = () => {
               updateEmployee();
               break;
 
-          case 'Update employee manager':
+          case 'Update employee managers':
               updateEmployeeManager();
               break; 
 
@@ -79,14 +81,25 @@ const starterPrompt = () => {
           case 'View employees by department':
               ViewEmployeesByDepartment();
               break;
+          
+          case 'Delete department, roles and employees':
+               deleteData();
+               break;
 
           case 'View total utilized budget by department':
               TotalBudget();
               break; 
+          case 'Quit Application':
+            console.log(`\nYou have Quit the Application`)
+            break;    
       }
   })
 };
 
+// Initiates user prompt
+starterPrompt();
+
+//function to view all Departments in the database
 const viewAllDepartments = () => {
   db.query(`SELECT 
   department.id, 
@@ -101,6 +114,7 @@ const viewAllDepartments = () => {
   })
 }
 
+//function to view all roles in the database
 const viewAllRoles = () => {
   db.query(`SELECT 
   role.id,
@@ -120,6 +134,7 @@ const viewAllRoles = () => {
   })
 }
 
+// function to view all employees in the database
 const viewAllEmployees = () => {
   db.query(`SELECT
   employee.id, 
@@ -144,6 +159,7 @@ const viewAllEmployees = () => {
   })
 }
 
+// function to add department to the database
 const addDepartment = () => {
   return inquirer.prompt([
       {
@@ -161,6 +177,7 @@ const addDepartment = () => {
   })
 }
 
+// function to add role and display table
 const addRole = () => {
   let departmentArray = [];
   db.query(`SELECT * FROM department`,  (err, results) => {
@@ -200,6 +217,7 @@ const addRole = () => {
   })
 }
 
+// function to add an employee
 const addEmployee = () => {
   const roleArray= [];
   const employeeArray= [];
@@ -289,6 +307,7 @@ const addEmployee = () => {
 })
 }
 
+// Function to update employee role
 const updateEmployee = () => {
   const roleArray= [];
   const employeeArray= [];
@@ -334,16 +353,23 @@ const updateEmployee = () => {
 })
 }
 
+// Function to update employee manager and view table of employees by manager
 const updateEmployeeManager = () => {
-  // const managerArray= [];
+  const managerArray= [];
   const employeeArray= [];
 
-  // populates employee array with all employees
-  db.query(`SELECT * FROM employee`, function (err, results) {
+  // populates manager array with all potential managers
+  db.query(`SELECT * FROM employee AS manager`, function (err, results) {
       for (let i = 0; i < results.length; i++) {
-          let employeeName = `${results[i].first_name} ${results[i].last_name}`
-          employeeArray.push(employeeName);
+          let managerName = `${results[i].first_name} ${results[i].last_name}`
+          managerArray.push(managerName);
       }
+      // populate employee array with all employees
+      db.query(`SELECT * FROM employee`, function (err, results) {
+        for (let i = 0; i < results.length; i++) {
+            let employeeName = `${results[i].first_name} ${results[i].last_name}`
+            employeeArray.push(employeeName);
+        }
       return inquirer.prompt([
           {
               type: 'list',
@@ -355,23 +381,26 @@ const updateEmployeeManager = () => {
               type: 'list',
               message: "Please select the employees manager",
               name: 'manager',
-              choices: employeeArray
+              choices: managerArray
           }   
       ]).then((data) => {
-              // get employee id
-              db.query(`SELECT id FROM employee WHERE employee.first_name = ? AND employee.last_name = ?;`, data.manager.split(" "), (err, results) => {
-                  manager = results[0].id;
-                  db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) 
-                  VALUES (?,?,?,?)`, [first_name, last_name, role_id, manager], (err, results) => {
-                      console.log(`\n${data.first_name} ${data.last_name} has been added to the database. See below:`);
+              // get manager id
+              db.query(`SELECT id FROM employee AS manager WHERE manager.first_name = ? AND manager.last_name = ?;`, data.manager.split(" "), (err, results) => {
+                  manager_id = results[0].id;
+                  db.query(`SELECT id FROM employee WHERE employee.first_name = ? AND employee.last_name = ?;`,data.employee.split(" "), (err, results) => {
+                    db.query(`UPDATE employee SET manager_id = ? WHERE id = ?;`, [manager_id, results[0].id], (err, results) => {
+                      console.log(`\n${data.employeer} has been updated in the database. See below:`);
                       console.log('\n');
                       ViewEmployeesByManager();
+                    })
                   })
               })
           })
-      })
-  }
+     })
+  })
+}
 
+// function to view employees by manager table
 const ViewEmployeesByManager = () => {
   db.query(`SELECT
   employee.id,
@@ -391,6 +420,7 @@ const ViewEmployeesByManager = () => {
   })
 }
 
+//function to view the employees by department table
 const ViewEmployeesByDepartment = () => {
   db.query(`SELECT 
   employee.id,
@@ -411,6 +441,7 @@ const ViewEmployeesByDepartment = () => {
   })
 }
 
+//function to get the Total utilized budget per department table
 const TotalBudget = () => {
   db.query(`SELECT
   department.name AS department_name,
@@ -428,9 +459,112 @@ const TotalBudget = () => {
   })
 }
 
-const Quit = () => {
-  return `^C`;
+// Delete Department, Role or Employee from Database
+const deleteData = () => {
+  return inquirer.prompt([
+    {
+        type: 'list',
+        message: "Which Data would you like to delete from the database?",
+        name: 'DeleteRequest',
+        choices: ['Department', 'Role', 'Employee', 'None']
+    }, 
+]).then((data) => {
+  switch(data.DeleteRequest) {
+    case 'Department':
+      DeleteDepartment();
+      break;
+
+    case 'Role':
+      DeleteRole();
+      break;
+
+    case 'Employee':
+      DeleteEmployee();
+      break;
+    default: starterPrompt();
+  }
+})
 }
 
-// Initiates user prompt
-starterPrompt();
+//Delete A Department function
+const DeleteDepartment = () => {
+  let departmentArray = [];
+  db.query(`SELECT * FROM department`,  (err, results) => {
+      for (let i = 0; i < results.length; i++) {
+          departmentArray.push(results[i].name);
+      }
+  return inquirer.prompt([
+    {
+        type: 'list',
+        message: "Which Department would you like to delete?",
+        name: 'deldep',
+        choices: departmentArray
+    }
+])
+ .then((data) => {
+    db.query (`SELECT id FROM department WHERE department.name = ?`, data.deldep, (err, results) => {
+      let department_id = results[0].id;
+      db.query(`DELETE FROM department WHERE id = ?`, department_id, (err, results) => {
+        console.log(`\n ${data.deldep} department has been deleted from the database. See below:`);
+        viewAllDepartments();
+    })
+  })
+  })
+})
+}
+
+
+//Delete A Role function
+const DeleteRole = () => {
+  let roleArray = [];
+  db.query(`SELECT * FROM role`,  (err, results) => {
+      for (let i = 0; i < results.length; i++) {
+          roleArray.push(results[i].title);
+      }
+  return inquirer.prompt([
+    {
+        type: 'list',
+        message: "What Role would you like to delete?",
+        name: 'delrol',
+        choices: roleArray
+    }
+])
+ .then((data) => {
+    db.query (`SELECT id FROM role WHERE role.title = ?`, data.delrol, (err, results) => {
+      let role_id = results[0].id;
+      db.query(`DELETE FROM role WHERE id = ?`, role_id, (err, results) => {
+        console.log(`\n ${data.delrol} role has been deleted from the database. See below:`);
+        viewAllRoles();
+    })
+  })
+  })
+})
+}
+
+//Delete An Employee function
+const DeleteEmployee = () => {
+  let employeeArray = [];
+  db.query(`SELECT * FROM employee`,  (err, results) => {
+      for (let i = 0; i < results.length; i++) {
+        let employeeName = `${results[i].first_name} ${results[i].last_name}`
+        employeeArray.push(employeeName);
+      }
+  return inquirer.prompt([
+    {
+        type: 'list',
+        message: "Which Employee would you like to delete?",
+        name: 'delemp',
+        choices: employeeArray
+    }
+])
+ .then((data) => {
+    db.query (`SELECT id FROM employee WHERE employee.first_name = ? AND employee.last_name = ?;`, data.delemp.split(" "),  (err, results) => {
+      let employee_id = results[0].id;
+      db.query(`DELETE FROM employee WHERE id = ?`, employee_id, (err, results) => {
+        console.log(`\n ${data.delemp} has been deleted from the database. See below:`);
+        viewAllEmployees();
+      })
+    })
+  })
+})
+}
