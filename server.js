@@ -2,7 +2,18 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-
+const {viewAllDepartments, 
+       viewAllRoles, 
+       viewAllEmployees, 
+       addDepartment, 
+       addRole, 
+       addEmployee, 
+       updateEmployee, 
+       updateEmployeeManager, 
+       ViewEmployeesByManager, 
+       ViewEmployeesByDepartment, 
+       TotalBudget
+      } = require('./index');
 // Connect to database
 const db = mysql.createConnection(
   {
@@ -16,7 +27,7 @@ const db = mysql.createConnection(
   console.log(`Connected to the employees_db database.`)
 );
 
-const starterprompt = () => {
+const starterPrompt = () => {
   return inquirer.prompt([
       {
           type: 'list',
@@ -87,4 +98,4 @@ const starterprompt = () => {
 };
 
 // Initiates user prompt
-starterprompt();
+starterPrompt();
