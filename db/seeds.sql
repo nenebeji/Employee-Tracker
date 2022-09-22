@@ -35,12 +35,3 @@ VALUES ("Nene", "Beji", 1, 2),
        ("Philip", "Iren", 2, 4);
 
 
--- Creating views
-
--- CREATE VIEW manager_employees AS
--- (SELECT staff.id,
--- staff.first_name,
--- staff.last_name,
--- staff.role_id
--- CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name
--- FROM employee AS manager RIGHT OUTER JOIN employee AS staff ON manager.id = emp.manager_id);
