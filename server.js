@@ -4,6 +4,7 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 
 require('dotenv').config();
+
 // Connect to database
 const db = mysql.createConnection(
   {
@@ -171,7 +172,7 @@ const addDepartment = () => {
   ])
   .then((data) => {
       db.query(`INSERT INTO department (name) VALUES (?)`, data.name, (err, results) => {
-          console.log(`\n ${data.name} department added has been added to the database. See below:`);
+          console.log(`\n ${data.name} department has been added to the database. See below:`);
           console.log('\n');
           viewAllDepartments();
       })
