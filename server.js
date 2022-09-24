@@ -292,7 +292,7 @@ const addEmployee = () => {
               // sets manager to null
               manager = null;
               // get role id
-              db.query(`SELECT id FROM role WHERE role.title = ?`, roleName, (err, results) => {
+              db.query(`SELECT id FROM role WHERE role.title = ?`, role_title, (err, results) => {
                   role_id = results[0].id;
                   db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) 
                   VALUES (?,?,?,?)`, [data.first_name, data.last_name, role_id, manager], (err, results) => {
