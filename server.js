@@ -341,7 +341,7 @@ const updateEmployee = () => {
               role_id = results[0].id;
               db.query(`SELECT id FROM employee WHERE employee.first_name = ? AND employee.last_name = ?;`, data.employee.split(" "), (err, results) => {
                   db.query(`UPDATE employee SET role_id = ? WHERE id = ?;`, [role_id, results[0].id], (err, results) => {
-                      console.log(`\n${data.employee} has been updated in the database. See below:`);
+                      console.log(`\n${data.employee}'s job title has been updated to ${data.role} in the database. See below:`);
                       console.log('\n');
                       viewAllEmployees();
                   })
@@ -389,7 +389,7 @@ const updateEmployeeManager = () => {
                   manager_id = results[0].id;
                   db.query(`SELECT id FROM employee WHERE employee.first_name = ? AND employee.last_name = ?;`,data.employee.split(" "), (err, results) => {
                     db.query(`UPDATE employee SET manager_id = ? WHERE id = ?;`, [manager_id, results[0].id], (err, results) => {
-                      console.log(`\n${data.employeer} has been updated in the database. See below:`);
+                      console.log(`\n${data.employee}'s manager has been updated to ${data.manager} in the database. See below:`);
                       console.log('\n');
                       ViewEmployeesByManager();
                     })
@@ -533,7 +533,7 @@ const DeleteRole = () => {
     db.query (`SELECT id FROM role WHERE role.title = ?`, data.delrol, (err, results) => {
       let role_id = results[0].id;
       db.query(`DELETE FROM role WHERE id = ?`, role_id, (err, results) => {
-        console.log(`\n ${data.delrol} role has been deleted from the database. See below:`);
+        console.log(`\n The ${data.delrol} role has been deleted from the database. See below:`);
         viewAllRoles();
     })
   })
