@@ -443,7 +443,7 @@ const ViewEmployeesByDepartment = () => {
   })
 }
 
-//function to get the Total utilized budget per department table
+//function to get the Total utilized budget All departments table
 const TotalBudget = () => {
   db.query(`SELECT
   department.name AS department_name,
