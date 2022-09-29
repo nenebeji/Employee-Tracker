@@ -72,6 +72,15 @@ ORDER BY employee.id;
 SELECT
 department.name AS department_name,
 SUM(salary) AS total_utilized_budget
-FROM role
+FROM role 
 JOIN department ON role.department_id = department.id
 GROUP BY department.name;
+
+SELECT
+department.name AS department_name,
+SUM(salary) AS total_utilized_budget
+FROM role 
+JOIN department ON role.department_id = department.id
+WHERE department_id = '4';
+
+-- SELECT * FROM total_budget WHERE department_name = 'Engineering';

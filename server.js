@@ -38,6 +38,7 @@ const starterPrompt = () => {
               'View employees by department',
               'Delete department, roles and employees',
               'View total utilized budget by department',
+              'View total budget for all departments',
               'Quit Application'
           ]
       }
@@ -89,8 +90,13 @@ const starterPrompt = () => {
                break;
 
           case 'View total utilized budget by department':
-              TotalBudget();
-              break; 
+              TotalPerDepartment();
+              break;
+           
+          case 'View total budget for all departments':
+               TotalBudget();
+               break;
+
           case 'Quit Application':
             console.log(`\nYou have Quit the Application`)
             break;    
@@ -459,6 +465,39 @@ const TotalBudget = () => {
       console.table(results);
       starterPrompt();
   })
+}
+
+//function to get the Total utilized budget per department table
+const TotalPerDepartment = () => {
+    let departmentArray = [];
+    db.query(`SELECT * FROM department`,  (err, results) => {
+        for (let i = 0; i < results.length; i++) {
+            departmentArray.push(results[i].name);
+        }
+    return inquirer.prompt([
+      {
+          type: 'list',
+          message: "Which Department budget would you like to view?",
+          name: 'depbudget',
+          choices: departmentArray
+      }
+  ])
+  .then((data) => {
+    db.query (`SELECT id FROM department WHERE department.name = ?`, data.depbudget, (err, results) => {
+      let department_id = results[0].id;
+      db.query(`SELECT
+      department.name AS department_name,
+      SUM(salary) AS total_utilized_budget
+      FROM role 
+      JOIN department ON role.department_id = department.id
+      WHERE department_id = ?`, department_id, (err, results) => {
+        console.log(`\n ${data.depbudget} department total budget is:\n`);
+        console.table(results);
+        starterPrompt();
+    })
+  })
+  })
+})
 }
 
 // Delete Department, Role or Employee from Database

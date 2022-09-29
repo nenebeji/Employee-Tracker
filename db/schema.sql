@@ -39,3 +39,11 @@ ALTER TABLE employee ADD FOREIGN KEY (manager_id) REFERENCES employee(id) ON DEL
 -- staff.last_name,
 -- CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name
 -- FROM employee AS manager RIGHT OUTER JOIN employee AS staff ON manager.id = staff.manager_id);
+
+-- CREATE VIEW total_budget AS 
+-- (SELECT 
+-- department.name AS department_name,
+-- SUM(salary) AS total_utilized_budget
+-- FROM role
+-- JOIN department ON role.department_id = department.id
+-- GROUP BY department.name);
