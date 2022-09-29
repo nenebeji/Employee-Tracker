@@ -105,7 +105,7 @@ Github Repo: https://github.com/nenebeji/Employee-Tracker
 
 ### Walkthrough Video
 
-https://drive.google.com/file/d/1PMuuX7vIzlWEBBn1F5VRyiuMDuyN3Nk_/view?usp=sharing
+https://drive.google.com/file/d/1BVss6hgtx33uM1OhQCUct4mN2GV2zWl8/view?usp=sharing
 
 
 ## License
